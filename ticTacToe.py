@@ -37,6 +37,15 @@ $$$$$$$$/ $$/   _______$$$$$$$$/______    _______$$$$$$$$/______    ______
     while not gameOver:
         #Get and assign a list of free spots to freeSpots variable
         freeSpots = make_list_of_free_fields(board)
+        #If freeSpots returns true (no free spots)
+        if freeSpots == True:
+            #Clear the screen
+            subprocess.call('clear')
+            #Draw the screen one final time
+            display_board(board, boxes)
+            #Declare cat's game and kill program
+            print("Cat's Game!!")
+            exit()
         #Assign users move a O if users move is a free square
         enter_move(board, freeSpots, size)
         sign = ' O'
@@ -44,20 +53,28 @@ $$$$$$$$/ $$/   _______$$$$$$$$/______    _______$$$$$$$$/______    ______
         gameOver = victory_for(board, sign, size)
         #End the game if victory is found
         if gameOver:
+            subprocess.call('clear')
+            display_board(board, boxes)
+            print("You are the WINNER!!")
             exit()
         #Update free spot list
         freeSpots = make_list_of_free_fields(board)
+        if freeSpots == True:
+            subprocess.call('clear')
+            display_board(board, boxes)
+            print("Cat's Game!!")
+            exit()
         #Assign computer move a X
         draw_move(board, freeSpots, boxes, size)
         sign = ' X'
         #Check for a victory
         gameOver = victory_for(board, sign, size)
-        #Clear terminal screen to imitate non moving board
-        subprocess.call('clear')
         #Draw the board to screen
+        subprocess.call('clear')
         display_board(board, boxes)
         #End game if victory was found
         if gameOver:
+            print("The Computer beat you!!")
             exit()
 
 def display_board(board, boxes):
@@ -132,12 +149,11 @@ def make_list_of_free_fields(board):
             if board[row][column] != ' X' and board[row][column] != ' O':
                 free.append(board[row][column])
     #Return free square list if free space list is not empty
-    if free != []:
-        return free
-    #If free square list is empty then a cats game exists, say so and kill program
+    if int(len(free)) != 0:
+        return (free)
+    #If free square list is empty then a cats game exists return True
     else:
-        print("Cat's Game!!")
-        exit()
+        return True
 
 def victory_for(board, sign, size):
     # The function analyzes the board status in order to check if
@@ -162,11 +178,6 @@ def victory_for(board, sign, size):
                 count += 1
             #If count reaches same size as possible win list then that is a win
             if count == int(size[0]):
-                #Look to see which sign is winner
-                if sign == ' O':
-                    print("You are the WINNER!!")
-                else:
-                    print("The Computer beat you!!")
                 return True
 
 def draw_move(board, freeSpots, boxes, size):
@@ -272,7 +283,8 @@ def possibleWin(argument, size):
             #Reset the winning squares list so its ready for next list of winning squares
             winningSquaresList = []
             #Reset countX to 1 for use in next portion of winning squares
-            countX = 1
+            if count == size:
+                countX = 1
         #Loop for verticle winning squares
         elif count > size and count <= size * 2:
             for z in range(1, size + 1):
